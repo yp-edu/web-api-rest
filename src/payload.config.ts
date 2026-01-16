@@ -4,10 +4,13 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { openapi, scalar } from 'payload-oapi'
 
 import { Users } from './collections/Users'
-import { Media } from './collections/Media'
+import { Follows } from './collections/Follows'
+import { Messages } from './collections/Messages'
 
+import pkg from '../package.json'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -18,7 +21,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Media],
+  collections: [Users, Follows, Messages],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -30,5 +33,12 @@ export default buildConfig({
     },
   }),
   sharp,
-  plugins: [],
+  plugins: [
+    openapi({
+      openapiVersion: '3.0',
+      metadata: { title: 'Web API REST', version: pkg.version },
+      // hideInternalCollections: true,
+    }),
+    scalar({}),
+  ],
 })
