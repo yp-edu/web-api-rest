@@ -43,7 +43,7 @@ export const Follows: CollectionConfig = {
           }
 
           const existing = await req.payload.find({
-            collection: 'follows' as any,
+            collection: 'follows',
             where: {
               and: [
                 { follower: { equals: data.follower } },
@@ -62,6 +62,23 @@ export const Follows: CollectionConfig = {
         }
 
         return data
+      },
+    ],
+    afterChange: [
+      async ({ doc, req, operation }) => {
+        if (operation === 'create' && doc.following) {
+          await req.payload.create({
+            collection: 'notifications',
+            data: {
+              recipient: doc.following,
+              from: doc.follower,
+              type: 'follow',
+              read: false,
+            },
+            req,
+          })
+        }
+        return doc
       },
     ],
   },

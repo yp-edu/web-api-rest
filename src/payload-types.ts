@@ -70,6 +70,7 @@ export interface Config {
     users: User
     follows: Follow
     messages: Message
+    notifications: Notification
     'payload-kv': PayloadKv
     'payload-jobs': PayloadJob
     'payload-locked-documents': PayloadLockedDocument
@@ -81,6 +82,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>
     follows: FollowsSelect<false> | FollowsSelect<true>
     messages: MessagesSelect<false> | MessagesSelect<true>
+    notifications: NotificationsSelect<false> | NotificationsSelect<true>
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>
     'payload-locked-documents':
@@ -174,6 +176,19 @@ export interface Message {
   id: number
   user: number | User
   message: string
+  updatedAt: string
+  createdAt: string
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notifications".
+ */
+export interface Notification {
+  id: number
+  recipient: number | User
+  from: number | User
+  type: string
+  read: boolean
   updatedAt: string
   createdAt: string
 }
@@ -314,6 +329,10 @@ export interface PayloadLockedDocument {
         relationTo: 'messages'
         value: number | Message
       } | null)
+    | ({
+        relationTo: 'notifications'
+        value: number | Notification
+      } | null)
   globalSlug?: string | null
   user: {
     relationTo: 'users'
@@ -396,6 +415,18 @@ export interface FollowsSelect<T extends boolean = true> {
 export interface MessagesSelect<T extends boolean = true> {
   user?: T
   message?: T
+  updatedAt?: T
+  createdAt?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "notifications_select".
+ */
+export interface NotificationsSelect<T extends boolean = true> {
+  recipient?: T
+  from?: T
+  type?: T
+  read?: T
   updatedAt?: T
   createdAt?: T
 }
