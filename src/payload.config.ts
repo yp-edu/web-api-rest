@@ -9,6 +9,7 @@ import { openapi, scalar } from 'payload-oapi'
 import { Users } from './collections/Users'
 import { Follows } from './collections/Follows'
 import { Messages } from './collections/Messages'
+import { Notifications } from './collections/Notifications'
 
 import pkg from '../package.json'
 import { migrations } from './migrations'
@@ -24,7 +25,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
-  collections: [Users, Follows, Messages],
+  collections: [Users, Follows, Messages, Notifications],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
