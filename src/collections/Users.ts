@@ -9,6 +9,7 @@ export const Users: CollectionConfig = {
     loginWithUsername: true,
   },
   access: {
+    admin: ({ req: { user } }) => user?.username === 'admin',
     create: () => true,
     read: () => true,
     update: () => false,

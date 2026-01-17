@@ -38,6 +38,10 @@ export const Follows: CollectionConfig = {
         }
 
         if (operation === 'create') {
+          if (req.user && data.follower !== req.user.id) {
+            throw new APIError('You can only create follows where you are the follower', 403)
+          }
+
           const existing = await req.payload.find({
             collection: 'follows' as any,
             where: {
@@ -48,6 +52,8 @@ export const Follows: CollectionConfig = {
             },
             limit: 1,
             depth: 0,
+            overrideAccess: false,
+            req,
           })
 
           if (existing.totalDocs > 0) {
@@ -63,10 +69,15 @@ export const Follows: CollectionConfig = {
     read: ({ req: { user } }) => {
       if (!user) return false
       return {
-        or: [{ follower: { equals: user.id } }, { following: { equals: user.id } }],
+        follower: { equals: user.id },
       } as Where
     },
-    create: ({ req: { user } }) => Boolean(user),
+    create: ({ req: { user } }) => {
+      if (!user) return false
+      return {
+        follower: { equals: user.id },
+      } as Where
+    },
     update: ({ req: { user } }) => {
       if (!user) return false
       return {
