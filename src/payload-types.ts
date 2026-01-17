@@ -68,7 +68,8 @@ export interface Config {
   blocks: {}
   collections: {
     users: User
-    media: Media
+    follows: Follow
+    messages: Message
     'payload-kv': PayloadKv
     'payload-locked-documents': PayloadLockedDocument
     'payload-preferences': PayloadPreference
@@ -77,7 +78,8 @@ export interface Config {
   collectionsJoins: {}
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>
-    media: MediaSelect<false> | MediaSelect<true>
+    follows: FollowsSelect<false> | FollowsSelect<true>
+    messages: MessagesSelect<false> | MessagesSelect<true>
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
     'payload-locked-documents':
       | PayloadLockedDocumentsSelect<false>
@@ -86,7 +88,7 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
   }
   db: {
-    defaultIDType: string
+    defaultIDType: number
   }
   fallbackLocale: null
   globals: {}
@@ -102,20 +104,18 @@ export interface Config {
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string
-    password: string
+    username: string
   }
   login: {
-    email: string
     password: string
+    username: string
   }
   registerFirstUser: {
-    email: string
     password: string
+    username: string
   }
   unlock: {
-    email: string
-    password: string
+    username: string
   }
 }
 /**
@@ -123,10 +123,11 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string
+  id: number
   updatedAt: string
   createdAt: string
-  email: string
+  email?: string | null
+  username: string
   resetPasswordToken?: string | null
   resetPasswordExpiration?: string | null
   salt?: string | null
@@ -144,29 +145,32 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "follows".
  */
-export interface Media {
-  id: string
-  alt: string
+export interface Follow {
+  id: number
+  follower: number | User
+  following: number | User
   updatedAt: string
   createdAt: string
-  url?: string | null
-  thumbnailURL?: string | null
-  filename?: string | null
-  mimeType?: string | null
-  filesize?: number | null
-  width?: number | null
-  height?: number | null
-  focalX?: number | null
-  focalY?: number | null
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages".
+ */
+export interface Message {
+  id: number
+  user: number | User
+  message: string
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string
+  id: number
   key: string
   data:
     | {
@@ -183,20 +187,24 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string
+  id: number
   document?:
     | ({
         relationTo: 'users'
-        value: string | User
+        value: number | User
       } | null)
     | ({
-        relationTo: 'media'
-        value: string | Media
+        relationTo: 'follows'
+        value: number | Follow
+      } | null)
+    | ({
+        relationTo: 'messages'
+        value: number | Message
       } | null)
   globalSlug?: string | null
   user: {
     relationTo: 'users'
-    value: string | User
+    value: number | User
   }
   updatedAt: string
   createdAt: string
@@ -206,10 +214,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string
+  id: number
   user: {
     relationTo: 'users'
-    value: string | User
+    value: number | User
   }
   key?: string | null
   value?:
@@ -229,7 +237,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string
+  id: number
   name?: string | null
   batch?: number | null
   updatedAt: string
@@ -243,6 +251,7 @@ export interface UsersSelect<T extends boolean = true> {
   updatedAt?: T
   createdAt?: T
   email?: T
+  username?: T
   resetPasswordToken?: T
   resetPasswordExpiration?: T
   salt?: T
@@ -259,21 +268,23 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "follows_select".
  */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T
+export interface FollowsSelect<T extends boolean = true> {
+  follower?: T
+  following?: T
   updatedAt?: T
   createdAt?: T
-  url?: T
-  thumbnailURL?: T
-  filename?: T
-  mimeType?: T
-  filesize?: T
-  width?: T
-  height?: T
-  focalX?: T
-  focalY?: T
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "messages_select".
+ */
+export interface MessagesSelect<T extends boolean = true> {
+  user?: T
+  message?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

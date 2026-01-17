@@ -11,6 +11,7 @@ import { Follows } from './collections/Follows'
 import { Messages } from './collections/Messages'
 
 import pkg from '../package.json'
+import { migrations } from './migrations'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
@@ -31,13 +32,13 @@ export default buildConfig({
     pool: {
       connectionString: process.env.POSTGRES_URL || '',
     },
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [
     openapi({
       openapiVersion: '3.0',
       metadata: { title: 'Web API REST', version: pkg.version },
-      // hideInternalCollections: true,
     }),
     scalar({}),
   ],
