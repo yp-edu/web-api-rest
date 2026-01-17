@@ -12,8 +12,8 @@ export const Users: CollectionConfig = {
     admin: ({ req: { user } }) => user?.username === 'admin',
     create: () => true,
     read: () => true,
-    update: () => false,
-    delete: () => false,
+    update: ({ req: { user } }) => user?.username === 'admin',
+    delete: ({ req: { user } }) => user?.username === 'admin',
   },
   fields: [],
 }
