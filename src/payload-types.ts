@@ -105,7 +105,7 @@ export interface Config {
   }
   jobs: {
     tasks: {
-      'cleanup-users': TaskCleanupUsers
+      cleanup: TaskCleanup
       inline: {
         input: unknown
         output: unknown
@@ -246,7 +246,7 @@ export interface PayloadJob {
     | {
         executedAt: string
         completedAt: string
-        taskSlug: 'inline' | 'cleanup-users'
+        taskSlug: 'inline' | 'cleanup'
         taskID: string
         input?:
           | {
@@ -279,7 +279,7 @@ export interface PayloadJob {
         id?: string | null
       }[]
     | null
-  taskSlug?: ('inline' | 'cleanup-users') | null
+  taskSlug?: ('inline' | 'cleanup') | null
   queue?: string | null
   waitUntil?: string | null
   processing?: boolean | null
@@ -501,14 +501,11 @@ export interface PayloadJobsStatsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "TaskCleanup-users".
+ * via the `definition` "TaskCleanup".
  */
-export interface TaskCleanupUsers {
+export interface TaskCleanup {
   input?: unknown
-  output: {
-    deletedCount: number
-    keptUsers: string[]
-  }
+  output?: unknown
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
