@@ -41,8 +41,9 @@ export default buildConfig({
     openapi({
       openapiVersion: '3.0',
       metadata: { title: 'Web API REST', version: pkg.version },
+      hideInternalCollections: true,
     }),
-    scalar({}),
+    scalar({ hideModels: true }),
   ],
   jobs: {
     tasks: [cleanup],
